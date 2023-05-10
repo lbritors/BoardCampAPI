@@ -1,0 +1,30 @@
+{
+  "name": "projeto16-boardcamp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/app.js",
+    "dev": "nodemon .src/app.js"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lbritors/BoardCampAPI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lbritors/BoardCampAPI/issues"
+  },
+  "homepage": "https://github.com/lbritors/BoardCampAPI#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "joi": "^17.9.2",
+    "node": "^20.1.0",
+    "nodemon": "^2.0.22",
+    "pg": "^8.10.0"
+  }
+}
