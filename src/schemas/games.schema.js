@@ -1,7 +1,10 @@
-import joi, { string } from "joi";
+import Joi from "joi";
 
 
-export const gamesSchema = joi.object({
-    name: joi.string().min(3).required(),
-    image: joi.string().dataUri().required()
+export const gamesSchema = Joi.object({
+    name: Joi.string().min(3).required(),
+    image: Joi.string().required(),
+    stockTotal: Joi.number().required(),
+    pricePerDay: Joi.number().required()
+
 })
