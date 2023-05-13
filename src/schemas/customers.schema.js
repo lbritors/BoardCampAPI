@@ -9,3 +9,10 @@ export const customersSchema = joi.object({
 
 
 });
+
+export const customersSchemaUpdate = joi.object({
+    name: joi.string().min(3).allow(),
+    phone: joi.string().min(10).max(11).allow(),
+    cpf: joi.string().length(11).allow(),
+    birthday: joi.date().allow()
+});
