@@ -19,11 +19,11 @@ export async function insertRentals(req, res) {
 
         if (Number(notAvailable.rows[0].count) > Number(gamesExists.rows[0].stockTotal)) return res.sendStatus(400);
         console.log(notAvailable.rows[0].count);
-        // const rentDate = (await db.query(`select current_date`)).rows[0].current_date;
-        // const pricePerDay = await db.query(`select games."pricePerDay" from  games where games.id = $1`, [gameId]);
-        // const originalPrice = Number(pricePerDay.rows[0].pricePerDay) * daysRented;
-        // const insert = await db.query(`insert into rentals ("customerId", "gameId", "daysRented", "originalPrice", "rentDate")
-        // values ($1, $2, $3, $4, $5)`, [customerId, gameId, daysRented, originalPrice, rentDate]);
+        const rentDate = (await db.query(`select current_date`)).rows[0].current_date;
+        const pricePerDay = await db.query(`select games."pricePerDay" from  games where games.id = $1`, [gameId]);
+        const originalPrice = Number(pricePerDay.rows[0].pricePerDay) * daysRented;
+        const insert = await db.query(`insert into rentals ("customerId", "gameId", "daysRented", "originalPrice", "rentDate")
+        values ($1, $2, $3, $4, $5)`, [customerId, gameId, daysRented, originalPrice, rentDate]);
         res.sendStatus(201);
     } catch (err) {
         res.status(500).send(err.message);
