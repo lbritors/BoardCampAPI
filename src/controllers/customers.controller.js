@@ -60,10 +60,11 @@ export async function updateCustomerById(req, res) {
     try {
        
         const customer = await db.query(`SELECT * from customers where id=$1`, [id]);
-        if (cpf && cpf !== customer.cpf) {
+        if (cpf && cpf !== customer.rows[0].cpf) {
             const cpfExists = await db.query(`SELECT customers.cpf from customers where customer.cpf = $1`, [cpf]);
             if (cpfExists.rowCount) return res.sendStatus(409);
         }
+        
 
         const cpfNew = cpf ? cpf : customer.rows[0].cpf;
         const nameNew = name ? name : customer.rows[0].name;
@@ -71,7 +72,6 @@ export async function updateCustomerById(req, res) {
         const birthdayNew = birthday ? birthday : customer.rows[0].birthday;
         const update = await db.query(`UPDATE customers SET name=$1, phone=$2, cpf=$3, birthday=$4
         where customers.id=$5`, [nameNew, phoneNew, cpfNew, birthdayNew, id]);
-        console.log(update);
         res.sendStatus(200);
         
     } catch (err) {
