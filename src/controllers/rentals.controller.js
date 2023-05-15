@@ -1,5 +1,6 @@
 import db from "../database/database.connection.js"
-
+import dayjs from "dayjs";
+import 'dayjs/locale/pt-br.js'
 
 export async function insertRentals(req, res) {
     const { customerId, gameId, daysRented } = req.body;
@@ -7,10 +8,13 @@ export async function insertRentals(req, res) {
 
     try {
         const customerExists = await db.query(`select customers.id from customers where customers.id = $1`, [customerId]);
-        console.log(customerExists);
         if (!customerExists.rowCount) return res.sendStatus(400);
-        const gamesExists = await db.query(`select * from games where gameS.id = $1`, [gameId]);
+
+        const gamesExists = await db.query(`select * from games where games.id = $1`, [gameId]);
         if (!gamesExists.rowCount) return res.sendStatus(400);
+
+        const notAvailable = await db.query(`select count(*) from rentals where "returnDate" IS NULL and "gameId" = $1`, [gameId]);
+        if (notAvailable.rows[0].count > gamesExists.rows[0].stockTotal) return res.sendStatus(400);
 
         const rentDate = (await db.query(`select current_date`)).rows[0].current_date;
         const pricePerDay = await db.query(`select games."pricePerDay" from  games where games.id = $1`, [gameId]);
@@ -30,12 +34,29 @@ export async function getRentals(req, res) {
         from rentals, customers, games where customers.id = rentals."customerId"
         and games.id = rentals."gameId"`);
 
-
+        const data = result.rows.map(r => {
+            return {
+                id: r.id,
+                customerId: r.customerId,
+                gameId: r.gameId,
+                rentDate: dayjs(r.rentDate).format("YYYY-MM-DD"),
+                daysRented: r.daysRented,
+                returnDate: r.returnDate,
+                originalPrice: r.originalPrice,
+                delayFee: r.delayFee,
+                customer: {
+                    id: r.customerId,
+                    name: r.customername
+                },
+                game: {
+                    id: r.gameId,
+                    name: r.gamename
+                }
+            }
+        });
         
-        res.send(result.rows);
+        res.status(200).send(data);
     } catch (err) {
         res.status(500).send(err.message);
     }
-
-
 }
