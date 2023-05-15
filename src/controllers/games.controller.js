@@ -14,7 +14,6 @@ export async function insertGames(req, res) {
     const { name, image, stockTotal, pricePerDay } = req.body;
     try {
         const nameExists = await db.query(`select games.name from games where games.name = $1`, [name]);
-        console.log(nameExists);
         if (nameExists.rowCount) return res.sendStatus(409);
         const insert = await db.query(`insert into games (name, image,"stockTotal", "pricePerDay") values 
         ($1, $2, $3, $4)`, [name ,image, stockTotal, pricePerDay]);
