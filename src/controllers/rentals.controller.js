@@ -87,11 +87,27 @@ export async function endRental(req, res) {
             delayFee = diffDays * gamePrice;
         }
 
-        // const updateReturnDate = await db.query(`update rentals set "returnDate"= $1,
-        // "delayFee" = $2 where rentals.id = $3`, [dateOfReturn, delayFee, id]);
+        const updateReturnDate = await db.query(`update rentals set "returnDate"= $1,
+        "delayFee" = $2 where rentals.id = $3`, [dateOfReturn, delayFee, id]);
 
         res.status(200).send(updateReturnDate.rows[0]);
         
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+export async function deleteRental(req, res) {
+    const { id } = req.params;
+
+    try {
+        const rentalExists = await db.query(`select * from rentals where rentals.id = $1`, [id]);
+        if (!rentalExists.rowCount) return res.sendStatus(404);
+        console.log(rentalExists.rows[0]);
+        if (!rentalExists.rows[0].returnDate) return res.sendStatus(400);
+
+        const deleteRental = await db.query(`delete from rentals where rentals.id = $1`, [id]);
+        res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message);
     }
